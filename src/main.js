@@ -1,13 +1,13 @@
 
-import { createApp, markRaw } from './vue'
-import { createPinia } from './pinia'
-import createPersistedState from './pinia-plugin-persistedstate'
-import './bootstrap/dist/css/bootstrap.min.css'
-import './@fortawesome/fontawesome-free/css/all.min.css'
-import './bootstrap/dist/js/bootstrap.bundle'
-import App from '/App.vue'
-import router from '/router'
-import axios from './axios'
+import { createApp, markRaw } from '../vue'
+import { createPinia } from '../pinia'
+import createPersistedState from '../pinia-plugin-persistedstate'
+import '../bootstrap/dist/css/bootstrap.min.css'
+import '../@fortawesome/fontawesome-free/css/all.min.css'
+import '../bootstrap/dist/js/bootstrap.bundle'
+import App from './App.vue'
+import router from './router'
+import axios from '../axios'
 
 window.axios = axios
 window.axios.defaults.baseURL = 'http://localhost:8000'
