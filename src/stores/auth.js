@@ -31,6 +31,7 @@ export const useAuthStore = defineStore('auth',{
         },
 
         async register(form){
+            console.log(form);
             await this.getToken();
             await axios.post('api/v1/usuario',form).then(
                 (res) => {

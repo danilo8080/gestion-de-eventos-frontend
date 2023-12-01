@@ -19,6 +19,9 @@ const authStore = useAuthStore();
               <li class="nav-item px-lg-5">
                 <RouterLink to="/contactos" class="nav-link">Contactos</RouterLink>
               </li>
+              <li class="nav-item px-lg-5">
+                <RouterLink to="/eventos" class="nav-link">Eventos</RouterLink>
+              </li>
             </ul>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="!authStore.user">
                 <li class="nav-item px-lg-5">

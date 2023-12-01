@@ -16,17 +16,21 @@ export function showalerta(msj, icono, focus){
     });
 }
 
-export function confirmation(name, url, redirect){
+export function confirmation(name, url, accion = ''){
     const alert = Swal.mixin({buttonsStyling:true});
+    let title = '¿Estas seguro que quieres eliminar a '+name+' de tus contactos?';
+    if(accion == 'eventos') {
+        title = '¿Estas seguro que quieres eliminar el evento '+name+' ?';
+    }
     alert.fire({
-        title:'¿Estas seguro que quieres eliminar a '+name+' de tus contactos?',
+        title:title,
         icon:'question',
         showCancelButton:true,
         confirmButtonText:'<i class="fa-solid fa-check"></i> si, eliminar',
         cancelButtonText:'<i class="fa-solid fa-ban"></i> Cancelar'
         }).then((res)=>{
             if(res.isConfirmed){
-                sendRequest('DELETE',{},url,redirect);
+                sendRequest('DELETE',{},url);
             }else{
                 showalerta('operacion cancelada','info', '');
             }
@@ -34,37 +38,18 @@ export function confirmation(name, url, redirect){
         });
 }
 
-// export function solicitud(method,params,url,msg){
-//     axios({method:method,url:url,data:params}).them(function(res){
-//          const estado = res.status;
-//          if(estado == 200){
-//             showalerta(msg,'success');
-//             window.setTimeout(function(){
-//                 window.location.href='/'
-
-//             },100);
-//          }else{
-//             showalerta('no se pudo recuperar la respuesta','error');
-//          }
-//     }).catch(function(error){
-//         showalerta('servidor no disponible', 'error');
-//     });
-// }
-
-export async function sendRequest(method,params,url,redirect=''){
+export async function sendRequest(method, params, url, alert = true, redirect=''){
     const authStore = useAuthStore();
     axios.defaults.headers.common['Authorization'] = 'Bearer '+authStore.authToken;
     let res;
     await axios({ method:method, url:url, data:params }).then(
         response => {
-            res = response.data.status,
-            showalerta(response.data.message, 'success', ''),
-            setTimeout(
-                () => (redirect !== '') ? window.location.href = redirect:''
-                ,2000)
+            res = response
         }).catch((errors) => {
-            console.log(errors.response.data);
-
+            showalerta(errors.response.data.message, 'error', '')
         })
+    if ( typeof res !== 'undefined' && res.status < 300 && alert) {
+        showalerta(res.data.message, 'success', '')
+    }
     return res;
 }

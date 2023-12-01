@@ -1,11 +1,7 @@
 <script setup>
-import axios, { getAdapter } from 'axios';
 import { ref, onMounted } from 'vue';
 import { confirmation, sendRequest } from '../../functions'
-import { useAuthStore } from '../../stores/auth';
 
-const authStore = useAuthStore();
-axios.defaults.headers.common['Authorization'] = 'Bearer '+authStore.authToken;
 onMounted( ()=> { 
     getContactos();
     getUsuarios();
@@ -14,36 +10,45 @@ const contactos = ref([]);
 const usuarios = ref([]);
 const referencia = ref([]);
 const load = ref(false);
+const form = ref({nombre: '', descripcion: '', tipo: '', avatar: ''}); 
 
 const getContactos = async () => {
-    await axios.get('/api/v1/listarcontactos').then(
-        response =>(
-            console.log(response.data),
-            contactos.value = response.data.data
-        ));
+    sendRequest('GET', {}, '/api/v1/listarcontactos', false).then(response => {
+        contactos.value = response.data.data 
+    })
     load.value = true;
 }
 const eliminarContactos = (email, nombre) => {
-    confirmation(nombre, ('/api/v1/eliminarcontacto/'+email), '/gestion-de-eventos-frontend/contactos');
+    confirmation(nombre, ('/api/v1/eliminarcontacto/'+email));
+    setTimeout(function() {
+        getContactos();
+        getUsuarios();
+    }, 2000);
 }
 const getUsuarios = async () => {
-    await axios.get('/api/v1/usuarios/buscar/'+referencia.value).then(
-        response =>(
-            usuarios.value = response.data.data
-        ));
+    sendRequest('GET', {}, ('/api/v1/usuarios/buscar/'+referencia.value), false).then(response => {
+        usuarios.value = response.data.data 
+    })
+    load.value = true;
 }
 
 const agregarContacto = async (email) => {
-    sendRequest('GET', {}, ('/api/v1/crearcontacto/'+email), '/gestion-de-eventos-frontend/contactos');
+    sendRequest('GET', {}, ('/api/v1/crearcontacto/'+email));
+    setTimeout(function() {
+        getUsuarios();
+        getContactos();
+    }, 1400);
 }
-
+const convertidor = (imagen) => {
+    return `data:image/jpeg;base64,${imagen}`;
+}
 
 </script>
 <template>
     <div class="row">
         <div class="col-md-4 offset-md-4">
             <div class="d-grid col-10 mx-auto">
-                <a class="btn btn-dark" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <a class="btn btn-dark" type="button" data-bs-toggle="modal" data-bs-target="#modalContactos">
                 <i class="fa-solid fa-circle-plus"></i> agregar contactos
                 </a>
             </div>
@@ -71,13 +76,13 @@ const agregarContacto = async (email) => {
                     <tbody class="table-group-divider">
                         <tr v-for="contacto, i in contactos" :key="contacto.id">
                             <td>{{ (i+1) }}</td>
-                            <td>{{ contacto.foto }}</td>
+                            <td class="td-image"> <img class="mini-image" :src="convertidor(contacto.foto)" alt="Image" /></td>
                             <td>{{ contacto.email }}</td>
                             <td>{{ contacto.nombre }}</td>
                             <td>{{ contacto.apodo }}</td>
                             <td>
                                 <button class="btn btn-danger" @click="eliminarContactos(contacto.email,  contacto.nombre)">
-                                    <i class="fa-solid fa-trash"></i>
+                                    <i class="fa-solid fa-trash"></i> 
                                 </button>
                             </td>
                         </tr>
@@ -86,8 +91,8 @@ const agregarContacto = async (email) => {
             </div>
         </div>
   
-        <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <!-- Modal agregar contactos -->
+        <div class="modal fade" id="modalContactos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -125,3 +130,15 @@ const agregarContacto = async (email) => {
         </div>
     </div>
 </template>
+<style>
+.td-image {
+    width: 40px;
+    height: 40px;
+}
+.mini-image {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+</style>

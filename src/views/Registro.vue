@@ -2,7 +2,18 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 const authStore = useAuthStore();
-const form = ref({nombre:'', apodo:'', email:'', password:''}); 
+const form = ref({nombre:'', apodo:'', email:'', password:'', foto:null, foto64:null});
+const onFileChange = (e) => {
+  form.value.foto = e.target.files[0];
+};
+const uploadImage = (e) => {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    authStore.register(form.value);
+    form.value.foto64 = e.target.result;
+  };
+  reader.readAsDataURL(form.value.foto);
+};
 </script>
 <template>
   <div class="row mt-5">
@@ -15,17 +26,24 @@ const form = ref({nombre:'', apodo:'', email:'', password:''});
         <!--
         <form @submit.prevent="$event => authStore.register(form)">
           -->
-        <form @submit.prevent="authStore.register(form)">
+        <form enctype="multipart/form-data" @submit.prevent="authStore.register(form)">
           <div class="input-group mb-3">
             <span class="input-group-text">
-              <i class="fa-solid fa-at"></i>
+              <i class="fa-solid fa-image"></i>
+            </span>
+            <input autofocus type="file" @change="onFileChange"
+             id="foto" class="form-control" accept="image/*" >
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">
+              <i class="fa-solid fa-user-tie"></i>
             </span>
             <input autofocus type="text" v-model="form.nombre"
             placeholder="Name" id="name" class="form-control">
           </div>
           <div class="input-group mb-3">
             <span class="input-group-text">
-              <i class="fa-solid fa-at"></i>
+              <i class="fa-solid fa-face-laugh-wink"></i>
             </span>
             <input autofocus type="text" v-model="form.apodo"
             placeholder="Apodo" id="apodo" class="form-control">
