@@ -15,6 +15,7 @@ const referencia = ref([]);
 const referenciaContacto = ref([]);
 const load = ref(false);
 const form = ref({nombre: '', descripcion: '', tipo: '', avatar: ''}); 
+const formActividades = ref({descripcion: '', valor: ''});
 
 const getContactos = async () => {
     sendRequest('GET', {}, ('/api/v1/listarcontactos/'+referenciaContacto.value), false).then(response => {
@@ -167,6 +168,49 @@ const agregarContactosAlEvento = (id, nombre) => {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cerrar</button>
+                <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="agregarActividades" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Crear Actividad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form @submit.prevent="crearActividad(formActividades)">
+                    <div class="input-group mb-3">
+                      <span class="input-group-text">
+                        <i class="fa-solid fa-calendar-week"></i>
+                      </span>
+                      <input autofocus type="text" v-model="formActividades.descripcion"
+                      placeholder="cervezas, almuerzo, cena, ..." id="descripcion" class="form-control">
+                    </div>
+                    <div class="input-group mb-3">
+                      <span class="input-group-text">
+                        <i class="fa-regular fa-calendar-days"></i>
+                      </span>
+                      <input autofocus type="text" v-model="formActividades.valor"
+                      id="valor" class="form-control">
+                    </div>
+                    <!-- <div class="input-group mb-3">
+                      <span class="input-group-text">
+                        <i class="fa-solid fa-key"></i>
+                      </span>
+                      <input type="text" v-model="form.avatar"
+                      placeholder="Avatar" id="avatar" class="form-control">
+                    </div> -->
+                    <div class="d-grid col-10 mx-auto">
+                      <button class="btn btn-success" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                  </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <!-- <button type="button" class="btn btn-primary">Understood</button> -->
             </div>
         </div>
