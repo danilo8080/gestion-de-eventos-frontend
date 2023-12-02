@@ -8,6 +8,7 @@ import 'bootstrap/dist/js/bootstrap.bundle'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import './registerServiceWorker'
 
 window.axios = axios
 window.axios.defaults.baseURL = 'http://localhost:8000'
